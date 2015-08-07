@@ -5,7 +5,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
-      "tupaijs": "*"
+      "tupaijs": "/Users/DQNEO/src/github.com/DQNEO/tupai.js"
   },
   "devDependencies": {
   }

@@ -1,5 +1,6 @@
 /**
  * @author <a href='bocelli.hu@gmail.com'>bocelli.hu</a>
+ * @author DQNEO
  * @since tupai.js 0.1
  */
 var path = require('path');

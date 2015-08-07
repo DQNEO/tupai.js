@@ -2,7 +2,7 @@ include ../common.mk
 JS_NAME=tupai
 
 JS_PRODUCTION=$(JS_PUB_DIR)/$(JS_NAME)-last.min.js
-JS_ORIGIN=$(JS_PUB_DIR)/$(JS_NAME)-last.js
+JS_ORIGIN=$(JS_PUB_DIR)/$(JS_NAME)-concat.js
 
 JS_ORIGIN_WITH_VERSION=$(JS_PUB_DIR)/$(JS_NAME)-$(JS_VERSION).js
 JS_PRODUCTION_WITH_VERSION=$(JS_PUB_DIR)/$(JS_NAME)-$(JS_VERSION).min.js

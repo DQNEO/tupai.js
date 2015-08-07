@@ -199,7 +199,7 @@ function configDebugMode(app) {
                 next();
             } else {*/
                 // return unminified javascript in debug mode.
-                var content = fs.readFileSync(path.join(webDir, 'tupai-last.js')).toString();
+                var content = fs.readFileSync(path.join(webDir, 'tupai-concat.js')).toString();
                 res.send(content);
             //}
         } else {

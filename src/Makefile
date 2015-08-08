@@ -11,7 +11,7 @@ all: clear $(JS_CONCAT)
 force: clear all
 
 $(JS_CONCAT): check $(JS_PUB_DIR)
-	$(CAT) $(WEB_JS_EXTRA_FILES) > $@
+	cp $(WEB_JS_EXTRA_FILES)  $@
 	$(MERGE) --classPath "." --output "$@" --append --noLog --isTupaiCore
 
 check:

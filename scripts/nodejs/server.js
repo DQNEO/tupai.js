@@ -206,8 +206,18 @@ function configDebugMode(app) {
             next();
         }
     });
+
+    // '/__libs/package.js'
+    app.use('/__libs', express.static(path.join(__dirname, '..', '..', 'libs')));
+
+    // '/__tupaisrc/Application.js'
+    var tupaisrcDir = path.join(__dirname, '..', '..', 'src/tupai');
+    app.use('/__tupaisrc', express.static(tupaisrcDir));
+
+    // '/tupai/tupai-concat.js'
     app.use('/tupai', express.static(webDir));
     app.use('/tupai', express.directory(webDir));
+
     app.use('/templates', express.static(mConfig.templates));
     app.use('/templates', express.directory(mConfig.templates));
 }

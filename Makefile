@@ -1,6 +1,9 @@
 
 all: js_libs js doc
 
+concat:
+	bin/tupaijs merge --classPath src --output releases/web/tupai-classes.js --noLog --isTupaiCore
+
 js:
 	make -C src
 

@@ -271,7 +271,7 @@ function writeClassListToOutput(classList, outputFileName, append) {
         for(var i=0,n=classList.length;i<n;i++) {
             //iterateFile(classList[i], outputFunc);
             var classzz = classList[i];
-            logger.log('   ' + classzz.className);
+            logger.log('   ' + classzz.className + '    ' + classzz.filePath);
             outputFunc(fs.readFileSync(classzz.filePath));
         }
     } finally {

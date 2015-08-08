@@ -90,7 +90,7 @@
                 arr.push(packageObj);
             }
 
-             return;
+            return;
         } else {
             cp[className] = classObj;
         }
@@ -224,9 +224,6 @@
     };
     global.Package.setBaseUrl = function(url) {
         mRemoteBaseUrl = url;
-    };
-    global.Package.setAutoLoad = function(autoLoad) {
-        mAutoLoad = autoLoad;
     };
     global.Package.setCacheEnabled = function(cacheEnabled) {
         mCacheEnabled = cacheEnabled;

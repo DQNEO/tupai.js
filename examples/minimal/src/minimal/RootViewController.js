@@ -6,9 +6,9 @@ Package('minimal')
     viewInit: function(options, url) {
         cp.ViewController.prototype.viewInit.apply(this, arguments);
         var view = new cp.View({
-            template: cp.Templates.get('minimal.RootViewController.content'),
+            template: cp.Templates.get('tmpl1'),
             templateParameters: {
-                lbl: 'Hello World!'
+                var1: 'Hello World!'
             }
         });
         this.setContentView(view);

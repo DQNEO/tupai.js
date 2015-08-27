@@ -12,6 +12,6 @@ module.exports = {
         if(!_version) {
             _version = require(path.join(__dirname, 'package.json')).version;
         }
-        return _version;
+        return _version + "-dev";
     }
 };

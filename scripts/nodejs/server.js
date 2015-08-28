@@ -55,6 +55,26 @@ function genTemplate(filePath, packageName, callback) {
     });
 }
 
+function listTupaiClass(callback) {
+    var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
+    var tupaiSrcDir = path.join(__dirname, '..', '..', 'src', 'tupai');
+    execute(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
+        //if (!output) {return;}
+        var classes = JSON.parse(output);
+        //console.log(classes);
+        var tupaijsfiles = classes.map(function(cls){
+            var path = cls.path;
+            return path.replace(tupaiSrcDir + "/", "");
+        });
+
+        var scripts = tupaijsfiles.map(function(filename){ return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';});
+        tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
+
+        callback();
+    });
+
+}
+
 function listClass(callback) {
     var classPath = mConfig.genConfigs + ';' + mConfig.genTemplates + ';' + mConfig.sources;
     execute(['list', '--classPath', classPath, '--ignoreNotFound'], function(output) {
@@ -243,45 +263,7 @@ function startHttpServer(releaseMode, options) {
 
 
 var classListHtml;
-
-var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
-var tupaijsfiles = [
-'Application.js',
-'PushStateTransitManager.js',
-'TransitManager.js',
-'ViewController.js',
-'Window.js',
-'animation/TransitAnimation.js',
-'animation/Transition.js',
-'events/Events.js',
-'model/ApiManager.js',
-'model/CacheManager.js',
-'model/DataSet.js',
-'model/caches/HashCache.js',
-'model/caches/HashCacheDataSet.js',
-'model/caches/QueueCache.js',
-'model/caches/QueueCacheDataSet.js',
-'net/HttpClient.js',
-'net/HttpRequest.js',
-'net/JsonpClient.js',
-'ui/TableView.js',
-'ui/TemplateEngine.js',
-'ui/TemplateView.js',
-'ui/Templates.js',
-'ui/View.js',
-'ui/ViewEvents.js',
-'util/CommonUtil.js',
-'util/HashUtil.js',
-'util/HttpUtil.js',
-'util/LinkedList.js',
-'util/MemCache.js',
-'util/UserAgent.js'
-];
-
-
-var scripts = tupaijsfiles.map(function(filename){ return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';});
-var tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
-
+var tupaiFilesHtml;
 
 function renderClassListHtml(callback) {
     listClass(function(cl) {
@@ -397,9 +379,11 @@ exports.start = function(options) {
         fs.mkdirSync('gen');
         genConfigs();
         genTemplates(function() {
-            renderClassListHtml(function() {
-                watchFs();
-                startHttpServer(releaseMode, options);
+            listTupaiClass(function(){
+                renderClassListHtml(function() {
+                    watchFs();
+                    startHttpServer(releaseMode, options);
+                });
             });
         });
     }

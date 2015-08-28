@@ -193,6 +193,7 @@ function configDebugMode(app) {
             } else {
                 var content = fs.readFileSync(filePath).toString();
                 content = content.replace(/<!--[ ]*__js_files__[ ]*-->[\s\S]*<!--[ ]*__js_files__[ ]*-->/, classListHtml);
+                content = content.replace(/<!-- __foobar__ -->/, tupaiFilesHtml);
                 res.send(content);
             }
         } else if(p == '/js/tupai.min.js') {
@@ -246,6 +247,9 @@ function startHttpServer(releaseMode, options) {
 
 
 var classListHtml;
+
+var tupaiFilesHtml = '<script src="__libs/package.js"></script>';
+
 function renderClassListHtml(callback) {
     listClass(function(cl) {
         //classListHtml = '<script src="__js/Config.js"></script>';

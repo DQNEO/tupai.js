@@ -193,7 +193,7 @@ function configDebugMode(app) {
             } else {
                 var content = fs.readFileSync(filePath).toString();
                 content = content.replace(/<!--[ ]*__js_files__[ ]*-->[\s\S]*<!--[ ]*__js_files__[ ]*-->/, classListHtml);
-                content = content.replace(/<!-- __tupai_files__ -->/, tupaiFilesHtml);
+                content = content.replace(/<!-- *__tupai_files__ *-->[\s\S]*<!-- *__tupai_files__ *-->/, tupaiFilesHtml);
                 res.send(content);
             }
         } else if(p == '/js/tupai.min.js') {
@@ -209,8 +209,8 @@ function configDebugMode(app) {
         }
     });
 
-    // '/__libs/package.js'
-    app.use('/__libs', express.static(path.join(__dirname, '..', '..', 'libs')));
+    // '/__tupaisrc/package.js'
+    app.use('/__tupaisrc', express.static(path.join(__dirname, '..', '..', 'libs')));
 
     // '/__tupaisrc/Application.js'
     var tupaisrcDir = path.join(__dirname, '..', '..', 'src/tupai');
@@ -248,7 +248,7 @@ function startHttpServer(releaseMode, options) {
 
 var classListHtml;
 
-var packagejsHtml = '<script src="__libs/package.js"></script>';
+var packagejsHtml = '<script src="__tupaisrc/package.js"></script>';
 var tupaijsfiles = [
 'Application.js',
 'PushStateTransitManager.js',

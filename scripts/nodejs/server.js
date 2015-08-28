@@ -209,12 +209,8 @@ function configDebugMode(app) {
         }
     });
 
-    // '/__tupaisrc/package.js'
-    app.use('/__tupaisrc', express.static(path.join(__dirname, '..', '..', 'libs')));
-
-    // '/__tupaisrc/Application.js'
-    var tupaisrcDir = path.join(__dirname, '..', '..', 'src/tupai');
-    app.use('/__tupaisrc', express.static(tupaisrcDir));
+    var tupaiRootDir = path.join(__dirname, '..', '..');
+    app.use('/__tupairoot', express.static(tupaiRootDir));
 
     // '/tupai/tupai-concat.js'
     app.use('/tupai', express.static(webDir));
@@ -248,7 +244,7 @@ function startHttpServer(releaseMode, options) {
 
 var classListHtml;
 
-var packagejsHtml = '<script src="__tupaisrc/package.js"></script>';
+var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
 var tupaijsfiles = [
 'Application.js',
 'PushStateTransitManager.js',
@@ -283,7 +279,7 @@ var tupaijsfiles = [
 ];
 
 
-var scripts = tupaijsfiles.map(function(filename){ return '<script src="__tupaisrc/' + filename + '"></script>';});
+var scripts = tupaijsfiles.map(function(filename){ return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';});
 var tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
 
 

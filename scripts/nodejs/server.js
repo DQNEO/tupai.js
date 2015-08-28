@@ -193,7 +193,7 @@ function configDebugMode(app) {
             } else {
                 var content = fs.readFileSync(filePath).toString();
                 content = content.replace(/<!--[ ]*__js_files__[ ]*-->[\s\S]*<!--[ ]*__js_files__[ ]*-->/, classListHtml);
-                content = content.replace(/<!-- __foobar__ -->/, tupaiFilesHtml);
+                content = content.replace(/<!-- __tupai_files__ -->/, tupaiFilesHtml);
                 res.send(content);
             }
         } else if(p == '/js/tupai.min.js') {
@@ -248,7 +248,44 @@ function startHttpServer(releaseMode, options) {
 
 var classListHtml;
 
-var tupaiFilesHtml = '<script src="__libs/package.js"></script>';
+var packagejsHtml = '<script src="__libs/package.js"></script>';
+var tupaijsfiles = [
+'Application.js',
+'PushStateTransitManager.js',
+'TransitManager.js',
+'ViewController.js',
+'Window.js',
+'animation/TransitAnimation.js',
+'animation/Transition.js',
+'events/Events.js',
+'model/ApiManager.js',
+'model/CacheManager.js',
+'model/DataSet.js',
+'model/caches/HashCache.js',
+'model/caches/HashCacheDataSet.js',
+'model/caches/QueueCache.js',
+'model/caches/QueueCacheDataSet.js',
+'net/HttpClient.js',
+'net/HttpRequest.js',
+'net/JsonpClient.js',
+'ui/TableView.js',
+'ui/TemplateEngine.js',
+'ui/TemplateView.js',
+'ui/Templates.js',
+'ui/View.js',
+'ui/ViewEvents.js',
+'util/CommonUtil.js',
+'util/HashUtil.js',
+'util/HttpUtil.js',
+'util/LinkedList.js',
+'util/MemCache.js',
+'util/UserAgent.js'
+];
+
+
+var scripts = tupaijsfiles.map(function(filename){ return '<script src="__tupaisrc/' + filename + '"></script>';});
+var tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
+
 
 function renderClassListHtml(callback) {
     listClass(function(cl) {

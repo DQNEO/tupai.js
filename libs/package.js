@@ -61,7 +61,7 @@
     var mLoadingQueue={};
     var mRemoteBaseUrl = 'js/';
     var mGlobalUtils = undefined;
-    var mAutoLoad = true;
+    var mAutoLoad = false;
     var mCacheEnabled = true;
     function mergeClassByClassPath(packageObj, classPath) {
 

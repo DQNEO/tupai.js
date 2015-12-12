@@ -15,7 +15,7 @@
     }
 
     function createClass(prototype, properties) {
-        var definition = tupaifunction = function() {
+        var definition = function() {
             this.initialize && this.initialize.apply(this, arguments);
         };
         definition.prototype = prototype || {};

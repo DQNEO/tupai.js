@@ -2,4 +2,4 @@
 var path = require('path');
 var baseDir = path.resolve(__dirname, "..");
 var make = require(path.join(baseDir, 'scripts', 'nodejs', 'make'));
-make.make();
+make.make('release');

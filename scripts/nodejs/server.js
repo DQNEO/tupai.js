@@ -62,12 +62,12 @@ function listTupaiClass(callback) {
         //if (!output) {return;}
         var classes = JSON.parse(output);
         //console.log(classes);
-        var tupaijsfiles = classes.map(function(cls){
+        var scripts = classes.map(function(cls){
             var path = cls.path;
-            return path.replace(tupaiSrcDir + "/", "");
+            var filename = path.replace(tupaiSrcDir + "/", "");
+            return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';
         });
 
-        var scripts = tupaijsfiles.map(function(filename){ return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';});
         tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
 
         callback();
@@ -93,12 +93,6 @@ function listClass(callback) {
 }
 
 var URL = require('url');
-function createProxyHttpHandler(config) {
-    return (function(req, res, next) {
-        req.url = config.basePathName + req.url;
-        config.proxy.proxyRequest(req, res)
-    });
-}
 
 function useProxyRequest(app) {
 
@@ -109,21 +103,16 @@ function useProxyRequest(app) {
     var proxies = serverConfig.proxies;
     console.log('proxies: ');
     for(var name in proxies) {
-        var u = URL.parse(proxies[name]);
-        var config = {
-            proxy: new httpProxy.HttpProxy({
-                target: {
-                    host: u.hostname,
-                    port: u.port,
-                    https: u.protocol === 'https:'
-                }
-            }),
-            basePathName: (u.pathname.length > 1 ? u.pathname : '')
-        };
+        var url = proxies[name];
+        var u = URL.parse(url);
+        var proxy = httpProxy.createProxyServer({secure:false});
+        console.log('    ' + name + ' -> ' + url);
+        app.use(name, function(req, res) {
+            proxy.web(req, res, {
+                target: url,
+            });
+        });
 
-        console.log('    ' + name + ' -> ' + u.protocol + '//' +
-                    u.hostname + ':' + (u.port?u.port:80) + u.pathname);
-        app.use(name, createProxyHttpHandler(config));
     }
 }
 
@@ -232,7 +221,6 @@ function configDebugMode(app) {
     var tupaiRootDir = path.join(__dirname, '..', '..');
     app.use('/__tupairoot', express.static(tupaiRootDir));
 
-    // '/tupai/tupai-concat.js'
     app.use('/tupai', express.static(webDir));
     app.use('/tupai', express.directory(webDir));
 

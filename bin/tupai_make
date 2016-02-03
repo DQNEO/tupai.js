@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+var path = require('path');
+var baseDir = path.resolve(__dirname, "..");
+var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
+tupai.make();

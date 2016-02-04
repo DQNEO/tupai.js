@@ -336,8 +336,7 @@ function watchFs() {
 }
 
 var mConfig;
-var server = {};
-server.start = function(options) {
+var startServer = function(options) {
     if(!tupai.isTupaiProjectDir()) {
         console.error('current dir is not a tupai project dir.');
         return;
@@ -384,7 +383,7 @@ program
 .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
 .parse(process.argv);
 
-server.start(program.args);
+    startServer(program.args);
 }
 
 

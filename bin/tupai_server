@@ -182,8 +182,17 @@ function useRouters(app) {
     }
 }
 
-function configDebugMode(app) {
+function startHttpServer(options) {
+    var app = express();
+
+    app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
+    if(options.printLog) {
+        app.use(express.logger());
+    }
+
     var serverConfig = mConfig.server;
+    useRouters(app);
+
     var webDir = path.join(baseDir, 'releases', mConfig.web);
     //console.log(mConfig);
 
@@ -224,18 +233,7 @@ function configDebugMode(app) {
     app.use('/tupai', express.directory(webDir));
     app.use('/templates', express.static(mConfig.templates));
     app.use('/templates', express.directory(mConfig.templates));
-}
 
-function startHttpServer(options) {
-    var app = express();
-    app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
-    if(options.printLog) {
-        app.use(express.logger());
-    }
-
-    var serverConfig = mConfig.server;
-    useRouters(app);
-    configDebugMode(app, serverConfig);
     app.use('/', express.static(mConfig.web));
 
     var port = serverConfig.port;

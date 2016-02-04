@@ -357,19 +357,17 @@ var startServer = function(options) {
         }
     }
 
-    if(true) {
-        tupai.rmdirSync('gen');
-        fs.mkdirSync('gen');
-        genConfigs();
-        genTemplates(function() {
-            listTupaiClass(function(){
-                renderClassListHtml(function() {
-                    watchFs();
-                    startHttpServer(false, options);
-                });
+    tupai.rmdirSync('gen');
+    fs.mkdirSync('gen');
+    genConfigs();
+    genTemplates(function() {
+        listTupaiClass(function(){
+            renderClassListHtml(function() {
+                watchFs();
+                startHttpServer(false, options);
             });
         });
-    }
+    });
 }
 
 

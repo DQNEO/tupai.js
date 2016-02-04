@@ -13,6 +13,9 @@ var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
 
 var tupaijsPath = path.join(baseDir, 'bin', 'tupaijs');
 var tupaiRootDir = path.join(baseDir);
+var URL = require('url');
+var app = express();
+var mConfig;
 
 function execute(args, callback) {
     var cp = spawn(tupaijsPath, args);
@@ -93,8 +96,6 @@ function listClass(callback) {
     });
 }
 
-var URL = require('url');
-
 function useProxyRequest(app) {
 
     var serverConfig = mConfig.server;
@@ -168,7 +169,6 @@ function sendFile(router) {
     };
 }
 
-var app = express();
 
 function startHttpServer(printLog) {
     console.log('startHttpServer:');
@@ -323,7 +323,6 @@ function watchFs() {
     });
 }
 
-var mConfig;
 var main = function() {
     program
             .option('-p, --printLog', 'print log to stdout. default is off')

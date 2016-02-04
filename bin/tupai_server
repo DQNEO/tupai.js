@@ -168,9 +168,10 @@ function sendFile(router) {
     };
 }
 
+var app = express();
+
 function startHttpServer(printLog) {
     console.log('startHttpServer:');
-    var app = express();
 
     app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
     if(printLog) {

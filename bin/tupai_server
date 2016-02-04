@@ -333,7 +333,6 @@ var main = function() {
             .parse(process.argv);
 
     var options = program;
-    console.dir(options.serverConfig);
     if(!tupai.isTupaiProjectDir()) {
         console.error('current dir is not a tupai project dir.');
         return;
@@ -344,10 +343,12 @@ var main = function() {
         if(!fs.existsSync(filename)) {
             console.error(filename + ' not exists.');
         } else {
+            console.log('load config file: ' + filename);
             try {
                 var configData = fs.readFileSync(filename);
                 var data = JSON.parse(configData.toString());
                 mConfig.server = data;
+                console.dir(data);
             } catch(e) {
                 console.error(e);
             }

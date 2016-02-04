@@ -177,17 +177,14 @@ function startHttpServer(printLog) {
 
     var serverConfig = mConfig.server;
     var routers = serverConfig.routers;
-    if(!routers || typeof routers !== 'object') {
-        console.log('no routers: ');
-        return;
-    }
+    if(routers && typeof routers === 'object') {
+        console.log('routers: ');
+        for(var name in routers) {
+            var router = routers[name];
 
-    console.log('routers: ');
-    for(var name in routers) {
-        var router = routers[name];
-
-        console.log('    ' + name + ' -> ' + router);
-        app.get(name, sendFile(router));
+            console.log('    ' + name + ' -> ' + router);
+            app.get(name, sendFile(router));
+        }
     }
 
     var webDir = path.join(baseDir, 'releases', mConfig.web);

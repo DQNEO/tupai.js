@@ -1,5 +1,17 @@
 #!/usr/bin/env node
+var program = require('commander');
 var path = require('path');
 var baseDir = path.resolve(__dirname, "..");
-var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
-tupai.startServer({});
+var server = require(path.join(baseDir, 'scripts', 'nodejs', 'server'));
+
+function main() {
+program
+.option('-t, --target <target>', 'target [debug|release] default is debug')
+.option('-p, --printLog', 'print log to stdout. default is off')
+.option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
+.parse(process.argv);
+
+server.start(program.args);
+}
+
+main();

@@ -211,13 +211,8 @@ function startHttpServer(printLog) {
                 res.send(content);
             }
         } else if(p == '/js/tupai.min.js') {
-            /*if(fs.existsSync(path.join(mConfig.web,'js','tupai.min.js'))) {
-                next();
-            } else {*/
-                // return unminified javascript in debug mode.
-                var content = fs.readFileSync(path.join(webDir, 'tupai-last.js')).toString();
-                res.send(content);
-            //}
+            var content = fs.readFileSync(path.join(webDir, 'tupai-last.js')).toString();
+            res.send(content);
         } else {
             next();
         }

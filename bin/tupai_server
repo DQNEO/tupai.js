@@ -166,7 +166,13 @@ function sendFile(router) {
     };
 }
 
-function useRouters(app) {
+function startHttpServer(options) {
+    var app = express();
+
+    app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
+    if(options.printLog) {
+        app.use(express.logger());
+    }
 
     var serverConfig = mConfig.server;
     var routers = serverConfig.routers;
@@ -180,17 +186,6 @@ function useRouters(app) {
         console.log('    ' + name + ' -> ' + router);
         app.get(name, sendFile(router));
     }
-}
-
-function startHttpServer(options) {
-    var app = express();
-
-    app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
-    if(options.printLog) {
-        app.use(express.logger());
-    }
-
-    useRouters(app);
 
     var webDir = path.join(baseDir, 'releases', mConfig.web);
     //console.log(mConfig);

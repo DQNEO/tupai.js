@@ -130,8 +130,6 @@ function startHttpServer(printLog) {
 
     var webDir = path.join(baseDir, 'releases', mConfig.web);
 
-    useProxyRequest(app);
-
     app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
     app.use('/__js', express.static(mConfig.sources));
     app.use('/__js', express.static(mConfig.genTemplates));
@@ -165,8 +163,8 @@ function startHttpServer(printLog) {
     app.use('/templates', express.static(mConfig.templates));
     app.use('/templates', express.directory(mConfig.templates));
 
+    useProxyRequest(app);
     app.use('/', express.static(mConfig.web));
-
     var port = mConfig.server.port;
     http.createServer(app).listen(port, function() {
         console.log('\nopen below url in your browser.');

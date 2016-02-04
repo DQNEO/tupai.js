@@ -336,7 +336,13 @@ function watchFs() {
 }
 
 var mConfig;
-var startServer = function(options) {
+var main = function() {
+    program
+            .option('-p, --printLog', 'print log to stdout. default is off')
+            .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
+            .parse(process.argv);
+
+    var options = program.args;
     if(!tupai.isTupaiProjectDir()) {
         console.error('current dir is not a tupai project dir.');
         return;
@@ -369,17 +375,5 @@ var startServer = function(options) {
         });
     });
 }
-
-
-function main() {
-    program
-            .option('-p, --printLog', 'print log to stdout. default is off')
-            .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
-            .parse(process.argv);
-
-    var options = program.args;
-    startServer(options);
-}
-
 
 main();

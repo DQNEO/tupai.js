@@ -356,11 +356,8 @@ var startServer = function(options) {
             }
         }
     }
-    var target = (options && options.target) || 'debug';
-    var releaseMode = ('release' === target);
-    if(releaseMode) {
-        startHttpServer(releaseMode, options);
-    } else {
+
+    if(true) {
         tupai.rmdirSync('gen');
         fs.mkdirSync('gen');
         genConfigs();
@@ -368,7 +365,7 @@ var startServer = function(options) {
             listTupaiClass(function(){
                 renderClassListHtml(function() {
                     watchFs();
-                    startHttpServer(releaseMode, options);
+                    startHttpServer(false, options);
                 });
             });
         });
@@ -378,7 +375,6 @@ var startServer = function(options) {
 
 function main() {
     program
-            .option('-t, --target <target>', 'target [debug|release] default is debug')
             .option('-p, --printLog', 'print log to stdout. default is off')
             .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
             .parse(process.argv);

@@ -173,7 +173,6 @@ var app = express();
 function startHttpServer(printLog) {
     console.log('startHttpServer:');
 
-    app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
     if(printLog) {
         app.use(express.logger());
     }
@@ -193,9 +192,12 @@ function startHttpServer(printLog) {
     var webDir = path.join(baseDir, 'releases', mConfig.web);
 
     useProxyRequest(app);
+
+    app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
     app.use('/__js', express.static(mConfig.sources));
     app.use('/__js', express.static(mConfig.genTemplates));
     app.use('/__js', express.static(mConfig.genConfigs));
+
     app.use('/', function(req, res, next) {
         var p = req.path;
         if(p === '/') p = '/index.html';

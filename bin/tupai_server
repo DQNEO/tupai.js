@@ -191,7 +191,6 @@ function startHttpServer(printLog) {
     }
 
     var webDir = path.join(baseDir, 'releases', mConfig.web);
-    //console.log(mConfig);
 
     useProxyRequest(app);
     app.use('/__js', express.static(mConfig.sources));

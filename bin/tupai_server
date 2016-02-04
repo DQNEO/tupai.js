@@ -190,7 +190,6 @@ function startHttpServer(options) {
         app.use(express.logger());
     }
 
-    var serverConfig = mConfig.server;
     useRouters(app);
 
     var webDir = path.join(baseDir, 'releases', mConfig.web);
@@ -236,7 +235,7 @@ function startHttpServer(options) {
 
     app.use('/', express.static(mConfig.web));
 
-    var port = serverConfig.port;
+    var port = mConfig.server.port;
     http.createServer(app).listen(port, function() {
         console.log('\nopen below url in your browser.');
         console.log('http://localhost:' + port);

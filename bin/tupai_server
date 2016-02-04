@@ -12,6 +12,8 @@ var httpProxy = require('http-proxy');
 var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
 
 var tupaijsPath = path.join(baseDir, 'bin', 'tupaijs');
+var tupaiRootDir = path.join(baseDir);
+
 function execute(args, callback) {
     var cp = spawn(tupaijsPath, args);
 
@@ -220,7 +222,6 @@ function startHttpServer(printLog) {
         }
     });
 
-    var tupaiRootDir = path.join(baseDir);
     app.use('/__tupairoot', express.static(tupaiRootDir));
 
     app.use('/tupai', express.static(webDir));

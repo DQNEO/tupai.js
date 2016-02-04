@@ -166,11 +166,11 @@ function sendFile(router) {
     };
 }
 
-function startHttpServer(options) {
+function startHttpServer(printLog) {
     var app = express();
 
     app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
-    if(options.printLog) {
+    if(printLog) {
         app.use(express.logger());
     }
 
@@ -332,7 +332,8 @@ var main = function() {
             .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
             .parse(process.argv);
 
-    var options = program.args;
+    var options = program;
+    console.dir(options.serverConfig);
     if(!tupai.isTupaiProjectDir()) {
         console.error('current dir is not a tupai project dir.');
         return;
@@ -360,7 +361,7 @@ var main = function() {
         listTupaiClass(function(){
             renderClassListHtml(function() {
                 watchFs();
-                startHttpServer(options);
+                startHttpServer(options.printLog);
             });
         });
     });

@@ -18,6 +18,7 @@ var app = express();
 var mConfig;
 
 function execute(args, callback) {
+    console.log('spawn :' + tupaijsPath + args);
     var cp = spawn(tupaijsPath, args);
 
     cp.stderr.pipe(process.stderr);

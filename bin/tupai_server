@@ -167,6 +167,7 @@ function sendFile(router) {
 }
 
 function startHttpServer(printLog) {
+    console.log('startHttpServer:');
     var app = express();
 
     app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
@@ -176,8 +177,10 @@ function startHttpServer(printLog) {
 
     var serverConfig = mConfig.server;
     var routers = serverConfig.routers;
-    if(!routers) return;
-    if(typeof routers !== 'object') return;
+    if(!routers || typeof routers !== 'object') {
+        console.log('no routers: ');
+        return;
+    }
 
     console.log('routers: ');
     for(var name in routers) {

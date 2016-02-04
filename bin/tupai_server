@@ -119,58 +119,6 @@ function useProxyRequest(app) {
     }
 }
 
-function sendFile(router) {
-    return function(req, res) {
-
-        var filename;
-        var renderTemplate;
-        if(typeof router === 'string') {
-            filename = router;
-            renderTemplate = false;
-        } else if(typeof router === 'object'){
-            filename = router.path;
-            renderTemplate = router.template;
-        }
-
-        if(!filename) {
-            res.send(404);
-            return;
-        }
-
-        if(req.params.length > 0) {
-            filename = tupai.format(filename, req.params);
-            if(!fs.existsSync(filename)) {
-                res.send(404);
-                return;
-            }
-            var stat = fs.statSync(filename);
-            if(stat.isDirectory()) {
-                // TODO  to serve files, providing a full-featured file browser
-            }
-        }
-
-        if(renderTemplate) {
-            var params = {};
-            [
-                'params', 'query', 'body', 'cookies',
-                'ip', 'path', 'host', 'protocol', 'originalUrl'
-            ].forEach(function(name) {
-                params[name] = req[name];
-            })
-            ejs.renderFile(filename, params, function(err, data) {
-                if(err) {
-                    res.send(500, err);
-                } else {
-                    res.send(data);
-                }
-            });
-        } else {
-            res.sendfile(filename);
-        }
-    };
-}
-
-
 function startHttpServer(printLog) {
     console.log('startHttpServer:');
 
@@ -179,16 +127,6 @@ function startHttpServer(printLog) {
     }
 
     var serverConfig = mConfig.server;
-    var routers = serverConfig.routers;
-    if(routers && typeof routers === 'object') {
-        console.log('routers: ');
-        for(var name in routers) {
-            var router = routers[name];
-
-            console.log('    ' + name + ' -> ' + router);
-            app.get(name, sendFile(router));
-        }
-    }
 
     var webDir = path.join(baseDir, 'releases', mConfig.web);
 

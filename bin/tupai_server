@@ -377,7 +377,8 @@ function main() {
             .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
             .parse(process.argv);
 
-    startServer(program.args);
+    var options = program.args;
+    startServer(options);
 }
 
 

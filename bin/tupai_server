@@ -226,7 +226,7 @@ function configDebugMode(app) {
     app.use('/templates', express.directory(mConfig.templates));
 }
 
-function startHttpServer(releaseMode, options) {
+function startHttpServer(options) {
     var app = express();
     app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
     if(options.printLog) {
@@ -235,9 +235,7 @@ function startHttpServer(releaseMode, options) {
 
     var serverConfig = mConfig.server;
     useRouters(app);
-    if(!releaseMode) {
-        configDebugMode(app, serverConfig);
-    }
+    configDebugMode(app, serverConfig);
     app.use('/', express.static(mConfig.web));
 
     var port = serverConfig.port;
@@ -370,7 +368,7 @@ var main = function() {
         listTupaiClass(function(){
             renderClassListHtml(function() {
                 watchFs();
-                startHttpServer(false, options);
+                startHttpServer(options);
             });
         });
     });

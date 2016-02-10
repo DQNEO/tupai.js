@@ -256,13 +256,12 @@ var main = function() {
             .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
             .parse(process.argv);
 
-    var options = program;
     if(!tupai.isTupaiProjectDir()) {
         console.error('current dir is not a tupai project dir.');
         return;
     }
     mConfig = tupai.getConfig();
-    console.log('-s ' + options.serverConfig);
+    console.log('-s ' + program.serverConfig);
 
     tupai.rmdirSync('gen');
     fs.mkdirSync('gen');
@@ -271,7 +270,7 @@ var main = function() {
         listTupaiClass(function(){
             renderClassListHtml(function() {
                 watchFs();
-                startHttpServer(options.printLog);
+                startHttpServer(program.printLog);
             });
         });
     });

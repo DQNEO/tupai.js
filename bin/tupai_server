@@ -22,6 +22,32 @@ var tupaiFilesHtml;
 
 var upstreamServer  = "http://10.0.0.2:8084/"; 
 
+function main() {
+    program
+            .option('-p, --printLog', 'print log to stdout. default is off')
+            .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
+            .parse(process.argv);
+
+    if(!tupai.isTupaiProjectDir()) {
+        console.error('current dir is not a tupai project dir.');
+        return;
+    }
+    mConfig = tupai.getConfig();
+    console.log('-s ' + program.serverConfig);
+
+    tupai.rmdirSync('gen');
+    fs.mkdirSync('gen');
+    genConfigs();
+    genTemplates(function() {
+        listTupaiClass(function(){
+            renderClassListHtml(function() {
+                watchFs();
+                startHttpServer(program.printLog);
+            });
+        });
+    });
+}
+
 function execute(args, callback) {
     console.log('spawn :' + tupaijsPath + args);
     var cp = spawn(tupaijsPath, args);
@@ -248,32 +274,6 @@ function watchFs() {
     });
     watcher.on('error', function(error) {
         console.error('Error happened', error);
-    });
-}
-
-var main = function() {
-    program
-            .option('-p, --printLog', 'print log to stdout. default is off')
-            .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
-            .parse(process.argv);
-
-    if(!tupai.isTupaiProjectDir()) {
-        console.error('current dir is not a tupai project dir.');
-        return;
-    }
-    mConfig = tupai.getConfig();
-    console.log('-s ' + program.serverConfig);
-
-    tupai.rmdirSync('gen');
-    fs.mkdirSync('gen');
-    genConfigs();
-    genTemplates(function() {
-        listTupaiClass(function(){
-            renderClassListHtml(function() {
-                watchFs();
-                startHttpServer(program.printLog);
-            });
-        });
     });
 }
 

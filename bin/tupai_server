@@ -99,24 +99,16 @@ function listClass(callback) {
 
 function useProxyRequest(app) {
 
-    var serverConfig = mConfig.server;
-    if(!serverConfig.proxies) return;
-    if(typeof serverConfig.proxies !== 'object') return;
-
-    var proxies = serverConfig.proxies;
-    console.log('proxies: ');
-    for(var name in proxies) {
-        var url = proxies[name];
-        var u = URL.parse(url);
-        var proxy = httpProxy.createProxyServer({secure:false});
-        console.log('    ' + name + ' -> ' + url);
-        app.use(name, function(req, res) {
-            proxy.web(req, res, {
-                target: url,
-            });
+    var key = '/';
+    var upstreamServer  = "http://10.0.0.2:8084/"; 
+    var u = URL.parse(upstreamServer);
+    var proxy = httpProxy.createProxyServer({secure:false});
+    console.log('proxy:    ' + key + ' -> ' + upstreamServer);
+    app.use(key, function(req, res) {
+        proxy.web(req, res, {
+            target: upstreamServer,
         });
-
-    }
+    });
 }
 
 function startHttpServer(printLog) {

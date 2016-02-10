@@ -128,19 +128,6 @@ function listClass(callback) {
     });
 }
 
-function useProxyRequest(app) {
-
-    var key = '/';
-    var u = URL.parse(upstreamServer);
-    var proxy = httpProxy.createProxyServer({secure:false});
-    console.log('proxy:    ' + key + ' -> ' + upstreamServer);
-    app.use(key, function(req, res) {
-        proxy.web(req, res, {
-            target: upstreamServer,
-        });
-    });
-}
-
 function startHttpServer(printLog) {
     console.log('startHttpServer:');
 
@@ -183,7 +170,15 @@ function startHttpServer(printLog) {
     app.use('/templates', express.static(mConfig.templates));
     app.use('/templates', express.directory(mConfig.templates));
 
-    useProxyRequest(app);
+    var u = URL.parse(upstreamServer);
+    var proxy = httpProxy.createProxyServer({secure:false});
+    console.log('proxy: /  -> ' + upstreamServer);
+    app.use('/', function(req, res) {
+        proxy.web(req, res, {
+            target: upstreamServer,
+        });
+    });
+
     app.use('/', express.static(mConfig.web));
     var port = 30000;
     http.createServer(app).listen(port, function() {

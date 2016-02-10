@@ -118,8 +118,6 @@ function startHttpServer(printLog) {
         app.use(express.logger());
     }
 
-    var serverConfig = mConfig.server;
-
     var webDir = path.join(baseDir, 'releases', mConfig.web);
 
     app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
@@ -157,7 +155,7 @@ function startHttpServer(printLog) {
 
     useProxyRequest(app);
     app.use('/', express.static(mConfig.web));
-    var port = mConfig.server.port;
+    var port = 30000;
     http.createServer(app).listen(port, function() {
         console.log('\nopen below url in your browser.');
         console.log('http://localhost:' + port);
@@ -264,22 +262,7 @@ var main = function() {
         return;
     }
     mConfig = tupai.getConfig();
-    if(options.serverConfig) {
-        var filename = options.serverConfig;
-        if(!fs.existsSync(filename)) {
-            console.error(filename + ' not exists.');
-        } else {
-            console.log('load config file: ' + filename);
-            try {
-                var configData = fs.readFileSync(filename);
-                var data = JSON.parse(configData.toString());
-                mConfig.server = data;
-                console.dir(data);
-            } catch(e) {
-                console.error(e);
-            }
-        }
-    }
+    console.log('-s ' + options.serverConfig);
 
     tupai.rmdirSync('gen');
     fs.mkdirSync('gen');

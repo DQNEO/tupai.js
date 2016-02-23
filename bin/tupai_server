@@ -27,13 +27,14 @@ function main() {
     program
             .option('-p, --printLog', 'print log to stdout. default is off')
             .option('-u, --upstream <URL>', 'upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/')
-            .option('-b, --basedir', 'tupaijs base directory')
+            .option('-d, --tupaidir <dir>', 'tupaijs base directory')
             .parse(process.argv);
 
     console.log('-s ' + program.upstream);
     proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
 
-    baseDir = program.basedir ? program.basedir : path.resolve(__dirname, "..");
+    console.log('-d ' + program.tupaidir);
+    baseDir = program.tupaidir ? program.tupaidir : path.resolve(__dirname, "..");
 
     tupai  = require(path.join(baseDir, 'scripts', 'nodejs'));
 

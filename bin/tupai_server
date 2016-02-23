@@ -22,7 +22,6 @@ var proxyURL;
 
 var baseDir = path.resolve(__dirname, "..");
 var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
-var tupaijsPath = path.join(baseDir, 'bin', 'tupaijs');
 
 function main() {
     program
@@ -52,6 +51,7 @@ function main() {
 }
 
 function spawnTupai(args, callback) {
+    var tupaijsPath = path.join(baseDir, 'bin', 'tupaijs');
     console.log('spawn :' + tupaijsPath + args);
     var cp = spawn(tupaijsPath, args);
 

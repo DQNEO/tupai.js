@@ -26,7 +26,7 @@ var proxyURL;
 function main() {
     program
             .option('-p, --printLog', 'print log to stdout. default is off')
-            .option('-s, --serverConfig <serverConfig>', 'serverConfig file path. will replace the server section in tupai.conf.json')
+            .option('-u, --upstream <URL>', 'upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/')
             .parse(process.argv);
 
     if(!tupai.isTupaiProjectDir()) {
@@ -34,8 +34,8 @@ function main() {
         return;
     }
     mConfig = tupai.getConfig();
-    console.log('-s ' + program.serverConfig);
-    proxyURL = program.serverConfig ? program.serverConfig : defaultUpstreamServer;
+    console.log('-s ' + program.upstream);
+    proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
 
     //tupai.rmdirSync('gen');
     //fs.mkdirSync('gen');

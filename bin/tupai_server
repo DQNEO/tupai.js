@@ -23,7 +23,6 @@ var proxyURL;
 var baseDir = path.resolve(__dirname, "..");
 var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
 var tupaijsPath = path.join(baseDir, 'bin', 'tupaijs');
-var tupaiRootDir = path.join(baseDir);
 
 function main() {
     program
@@ -167,7 +166,7 @@ function startHttpServer(printLog) {
         }
     });
 
-    app.use('/__tupairoot', express.static(tupaiRootDir));
+    app.use('/__tupairoot', express.static(baseDir));
 
     app.use('/tupai', express.static(webDir));
     app.use('/tupai', express.directory(webDir));

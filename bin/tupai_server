@@ -51,7 +51,7 @@ function main() {
     //});
 }
 
-function execute(args, callback) {
+function spawnTupai(args, callback) {
     console.log('spawn :' + tupaijsPath + args);
     var cp = spawn(tupaijsPath, args);
 
@@ -80,7 +80,7 @@ function genConfigs() {
 function genTemplates(callback) {
     console.log('gen template files:');
     console.log('    ' + mConfig.templates + ' -> ' + mConfig.genTemplates);
-    execute(['templates', mConfig.templates, mConfig.genTemplates, '-m', 'no'])
+    spawnTupai(['templates', mConfig.templates, mConfig.genTemplates, '-m', 'no'])
     .on('exit', function() {
         callback();
     });
@@ -88,7 +88,7 @@ function genTemplates(callback) {
 
 function genTemplate(filePath, packageName, callback) {
     console.log('gen template file:' + filePath);
-    execute(['template', filePath, mConfig.genTemplates, packageName, '-m', 'no'])
+    spawnTupai(['template', filePath, mConfig.genTemplates, packageName, '-m', 'no'])
     .on('exit', function() {
         callback();
     });
@@ -97,7 +97,7 @@ function genTemplate(filePath, packageName, callback) {
 function listTupaiClass(callback) {
     var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
     var tupaiSrcDir = path.join(baseDir, 'src', 'tupai');
-    execute(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
+    spawnTupai(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
         //if (!output) {return;}
         var classes = JSON.parse(output);
         //console.log(classes);
@@ -116,7 +116,7 @@ function listTupaiClass(callback) {
 
 function listClass(callback) {
     var classPath = mConfig.genConfigs + ';' + mConfig.genTemplates + ';' + mConfig.sources;
-    execute(['list', '--classPath', classPath, '--ignoreNotFound'], function(output) {
+    spawnTupai(['list', '--classPath', classPath, '--ignoreNotFound'], function(output) {
         var classList;
         try {
             classList = JSON.parse(output);

@@ -170,12 +170,13 @@ function startHttpServer(printLog) {
     app.use('/templates', express.static(mConfig.templates));
     app.use('/templates', express.directory(mConfig.templates));
 
-    var u = URL.parse(upstreamServer);
+    var proxyURL = upstreamServer;
+    var u = URL.parse(proxyURL);
     var proxy = httpProxy.createProxyServer({secure:false});
-    console.log('proxy: /  -> ' + upstreamServer);
+    console.log('proxy: /  -> ' + proxyURL);
     app.use('/', function(req, res) {
         proxy.web(req, res, {
-            target: upstreamServer,
+            target: proxyURL,
         });
     });
 

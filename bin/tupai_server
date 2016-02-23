@@ -20,8 +20,8 @@ var tupaiFilesHtml;
 var defaultUpstreamServer  = "http://10.0.0.2:8084/";
 var proxyURL;
 
-var baseDir = path.resolve(__dirname, "..");
-var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
+var baseDir;
+var tupai;
 
 function main() {
     program
@@ -29,14 +29,18 @@ function main() {
             .option('-u, --upstream <URL>', 'upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/')
             .parse(process.argv);
 
+    console.log('-s ' + program.upstream);
+    proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
+
+    baseDir = path.resolve(__dirname, "..");
+    tupai  = require(path.join(baseDir, 'scripts', 'nodejs'));
+
     if(!tupai.isTupaiProjectDir()) {
         console.error('current dir is not a tupai project dir.');
         return;
     }
-    mConfig = tupai.getConfig();
-    console.log('-s ' + program.upstream);
-    proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
 
+    mConfig = tupai.getConfig();
     //tupai.rmdirSync('gen');
     //fs.mkdirSync('gen');
     //genConfigs();

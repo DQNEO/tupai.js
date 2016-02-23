@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 var program = require('commander');
 var path = require('path');
-var baseDir = path.resolve(__dirname, "..");
 
 var fs = require('fs');
 var spawn = require('child_process').spawn;
@@ -9,10 +8,6 @@ var http = require('http');
 var ejs = require('ejs');
 var express = require('express');
 var httpProxy = require('http-proxy');
-var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
-
-var tupaijsPath = path.join(baseDir, 'bin', 'tupaijs');
-var tupaiRootDir = path.join(baseDir);
 var URL = require('url');
 var app = express();
 
@@ -24,6 +19,11 @@ var tupaiFilesHtml;
 
 var defaultUpstreamServer  = "http://10.0.0.2:8084/";
 var proxyURL;
+
+var baseDir = path.resolve(__dirname, "..");
+var tupai = require(path.join(baseDir, 'scripts', 'nodejs'));
+var tupaijsPath = path.join(baseDir, 'bin', 'tupaijs');
+var tupaiRootDir = path.join(baseDir);
 
 function main() {
     program

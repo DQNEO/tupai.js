@@ -35,17 +35,17 @@ function main() {
     mConfig = tupai.getConfig();
     console.log('-s ' + program.serverConfig);
 
-    tupai.rmdirSync('gen');
-    fs.mkdirSync('gen');
-    genConfigs();
-    genTemplates(function() {
+    //tupai.rmdirSync('gen');
+    //fs.mkdirSync('gen');
+    //genConfigs();
+    //genTemplates(function() {
         listTupaiClass(function(){
             renderClassListHtml(function() {
                 watchFs();
                 startHttpServer(program.printLog);
             });
         });
-    });
+    //});
 }
 
 function execute(args, callback) {

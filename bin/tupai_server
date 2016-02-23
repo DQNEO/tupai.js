@@ -21,6 +21,7 @@ var classListHtml;
 var tupaiFilesHtml;
 
 var defaultUpstreamServer  = "http://10.0.0.2:8084/";
+var proxyURL;
 
 function main() {
     program
@@ -34,6 +35,7 @@ function main() {
     }
     mConfig = tupai.getConfig();
     console.log('-s ' + program.serverConfig);
+    proxyURL = program.serverConfig ? program.serverConfig : defaultUpstreamServer;
 
     //tupai.rmdirSync('gen');
     //fs.mkdirSync('gen');
@@ -170,7 +172,6 @@ function startHttpServer(printLog) {
     app.use('/templates', express.static(mConfig.templates));
     app.use('/templates', express.directory(mConfig.templates));
 
-    var proxyURL = defaultUpstreamServer;
     var u = URL.parse(proxyURL);
     var proxy = httpProxy.createProxyServer({secure:false});
     console.log('proxy: /  -> ' + proxyURL);

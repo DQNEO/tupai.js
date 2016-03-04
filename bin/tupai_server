@@ -59,8 +59,8 @@ function main() {
             //if (!output) {return;}
             var classes = JSON.parse(output);
             //console.log(classes);
-            var scripts = classes.map(function(cls){
-                var path = cls.path;
+            var scripts = classes.map(function(_class){
+                var path = _class.path;
                 var filename = path.replace(tupaiSrcDir + "/", "");
                 return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';
             });

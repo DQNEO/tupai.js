@@ -170,9 +170,6 @@ function startHttpServer(printLog) {
                 content = content.replace(/<!-- *__tupai_files__ *-->[\s\S]*<!-- *__tupai_files__ *-->/, tupaiFilesHtml);
                 res.send(content);
             }
-        } else if(p == '/js/tupai.min.js') {
-            var content = fs.readFileSync(path.join(webDir, 'tupai-last.js')).toString();
-            res.send(content);
         } else {
             next();
         }

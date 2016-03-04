@@ -190,6 +190,7 @@ function configDebugMode(app) {
     var webDir = path.join(__dirname, '..', '..', 'releases', mConfig.web);
     //console.log(mConfig);
 
+    useProxyRequest(app);
     app.use('/__js', express.static(mConfig.sources));
     app.use('/__js', express.static(mConfig.genTemplates));
     app.use('/__js', express.static(mConfig.genConfigs));
@@ -219,7 +220,6 @@ function configDebugMode(app) {
         }
     });
 
-    useProxyRequest(app);
     var tupaiRootDir = path.join(__dirname, '..', '..');
     app.use('/__tupairoot', express.static(tupaiRootDir));
 

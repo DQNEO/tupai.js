@@ -114,9 +114,6 @@ function genTemplate(filePath, packageName, callback) {
     });
 }
 
-function listTupaiClass() {
-}
-
 function listClass(callback) {
     var classPath = tupaiConfig.genConfigs + ';' + tupaiConfig.genTemplates + ';' + tupaiConfig.sources;
     spawnTupai(['list', '--classPath', classPath, '--ignoreNotFound'], function(output) {

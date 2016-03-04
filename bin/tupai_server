@@ -12,7 +12,7 @@ var URL = require('url');
 var app = express();
 
 var chokidar = require('chokidar');
-var mConfig;
+var tupaiConfig;
 
 var classListHtml;
 var tupaiFilesHtml;
@@ -42,7 +42,7 @@ function main() {
     baseDir = program.basedir ? program.basedir : '.';
     process.chdir(baseDir);
 
-    mConfig = tupai.getConfig();
+    tupaiConfig = tupai.getConfig();
     tupai.rmdirSync('gen');
     fs.mkdirSync('gen');
     fs.mkdirSync('gen/templates');
@@ -90,7 +90,7 @@ function spawnTupai(args, callback) {
             callback(result);
         });
     } else {
-        if(mConfig.logTupai) {
+        if(tupaiConfig.logTupai) {
             cp.stdout.pipe(process.stdout);
         }
     }
@@ -99,7 +99,7 @@ function spawnTupai(args, callback) {
 
 function genConfigs() {
     console.log('gen configs:');
-    tupai.compileConfigSync(mConfig.configs, mConfig.genConfigs, 'Config');
+    tupai.compileConfigSync(tupaiConfig.configs, tupaiConfig.genConfigs, 'Config');
 }
 
 function genTemplates(callback) {
@@ -107,7 +107,7 @@ function genTemplates(callback) {
 
 function genTemplate(filePath, packageName, callback) {
     console.log('gen template file:' + filePath);
-    spawnTupai(['template', filePath, mConfig.genTemplates, packageName, '-m', 'no'])
+    spawnTupai(['template', filePath, tupaiConfig.genTemplates, packageName, '-m', 'no'])
     .on('exit', function() {
         callback();
     });
@@ -117,7 +117,7 @@ function listTupaiClass() {
 }
 
 function listClass(callback) {
-    var classPath = mConfig.genConfigs + ';' + mConfig.genTemplates + ';' + mConfig.sources;
+    var classPath = tupaiConfig.genConfigs + ';' + tupaiConfig.genTemplates + ';' + tupaiConfig.sources;
     spawnTupai(['list', '--classPath', classPath, '--ignoreNotFound'], function(output) {
         var classList;
         try {
@@ -140,18 +140,18 @@ function startHttpServer(printLog) {
         app.use(express.logger());
     }
 
-    var webDir = path.join(tupaiDir, 'releases', mConfig.web);
+    var webDir = path.join(tupaiDir, 'releases', tupaiConfig.web);
 
     app.use(express.favicon(path.join(tupaiDir, 'favicon.ico')));
-    app.use('/__js', express.static(mConfig.sources));
-    app.use('/__js', express.static(mConfig.genTemplates));
-    app.use('/__js', express.static(mConfig.genConfigs));
+    app.use('/__js', express.static(tupaiConfig.sources));
+    app.use('/__js', express.static(tupaiConfig.genTemplates));
+    app.use('/__js', express.static(tupaiConfig.genConfigs));
 
     app.use('/', function(req, res, next) {
         var p = req.path;
         if(p === '/') p = '/index.html';
         if(p.match(/^\/.*\.html$/)) {
-            var filePath = path.join(mConfig.web, p);
+            var filePath = path.join(tupaiConfig.web, p);
             if(!fs.existsSync(filePath)) {
                 next();
             } else {
@@ -172,8 +172,8 @@ function startHttpServer(printLog) {
 
     app.use('/tupai', express.static(webDir));
     app.use('/tupai', express.directory(webDir));
-    app.use('/templates', express.static(mConfig.templates));
-    app.use('/templates', express.directory(mConfig.templates));
+    app.use('/templates', express.static(tupaiConfig.templates));
+    app.use('/templates', express.directory(tupaiConfig.templates));
 
     var u = URL.parse(proxyURL);
     var proxy = httpProxy.createProxyServer({secure:false});
@@ -184,7 +184,7 @@ function startHttpServer(printLog) {
         });
     });
 
-    app.use('/', express.static(mConfig.web));
+    app.use('/', express.static(tupaiConfig.web));
     var port = 30000;
     http.createServer(app).listen(port, function() {
         console.log('\nopen below url in your browser.');
@@ -207,7 +207,7 @@ function renderClassListHtml(callback) {
 function watchFs() {
     console.log('start watching files:');
 
-    var paths = [mConfig.sources, mConfig.templates, mConfig.configs];
+    var paths = [tupaiConfig.sources, tupaiConfig.templates, tupaiConfig.configs];
     paths.forEach(function(path) {
         console.log('    watching ' + path);
     });
@@ -220,19 +220,19 @@ function watchFs() {
     };
     var rules = [
         {
-            regexp: new RegExp(mConfig.sources + "\/.*\.js$"),
+            regexp: new RegExp(tupaiConfig.sources + "\/.*\.js$"),
             fn: function(changeType, filePath) {
                 renderClassListHtmlFn(changeType);
             }
         },
         {
-            regexp: new RegExp(mConfig.templates + "\/.*\.html$"),
+            regexp: new RegExp(tupaiConfig.templates + "\/.*\.html$"),
             fn: function(changeType, filePath) {
                 if(changeType === 'unlink') {
                     fs.unlinkSync(path.join('gen', filePath.replace(/\.html$/, '.js')));
                     renderClassListHtmlFn(changeType);
                 } else {
-                    var classPath = path.relative(mConfig.templates, filePath).replace(/\.html$/, '');
+                    var classPath = path.relative(tupaiConfig.templates, filePath).replace(/\.html$/, '');
                     genTemplate(filePath, classPath.split('/').join('.'), function() {
                         renderClassListHtmlFn(changeType);
                     });
@@ -240,7 +240,7 @@ function watchFs() {
             }
         },
         {
-            regexp: new RegExp(mConfig.configs + "\/.*\.json$"),
+            regexp: new RegExp(tupaiConfig.configs + "\/.*\.json$"),
             fn: function(changeType, filePath) {
                 try {
                     genConfigs();

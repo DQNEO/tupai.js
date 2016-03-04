@@ -43,12 +43,7 @@ function main() {
     //fs.mkdirSync('gen');
     //genConfigs();
     //genTemplates(function() {
-        listTupaiClass(function(){
-            renderClassListHtml(function() {
-                watchFs();
-                startHttpServer(program.printLog);
-            });
-        });
+    listTupaiClass();
     //});
 }
 
@@ -96,7 +91,7 @@ function genTemplate(filePath, packageName, callback) {
     });
 }
 
-function listTupaiClass(callback) {
+function listTupaiClass() {
     var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
     var tupaiSrcDir = path.join(tupaiDir, 'src', 'tupai');
     spawnTupai(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
@@ -111,7 +106,11 @@ function listTupaiClass(callback) {
 
         tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
 
-        callback();
+        renderClassListHtml(function() {
+            watchFs();
+            startHttpServer(program.printLog);
+        });
+
     });
 
 }

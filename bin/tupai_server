@@ -49,26 +49,26 @@ function main() {
     genConfigs();
     genTemplates(function() {
 
-    var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
-    var tupaiSrcDir = path.join(tupaiDir, 'src', 'tupai');
-    spawnTupai(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
-        //if (!output) {return;}
-        var classes = JSON.parse(output);
-        //console.log(classes);
-        var scripts = classes.map(function(cls){
-            var path = cls.path;
-            var filename = path.replace(tupaiSrcDir + "/", "");
-            return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';
+        var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
+        var tupaiSrcDir = path.join(tupaiDir, 'src', 'tupai');
+        spawnTupai(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
+            //if (!output) {return;}
+            var classes = JSON.parse(output);
+            //console.log(classes);
+            var scripts = classes.map(function(cls){
+                var path = cls.path;
+                var filename = path.replace(tupaiSrcDir + "/", "");
+                return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';
+            });
+
+            tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
+
+            renderClassListHtml(function() {
+                watchFs();
+                startHttpServer(program.printLog);
+            });
+
         });
-
-        tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
-
-        renderClassListHtml(function() {
-            watchFs();
-            startHttpServer(program.printLog);
-        });
-
-    });
 
 
     });

@@ -75,7 +75,7 @@ function main() {
 
 function spawnTupai(args, callback) {
     var tupaijsPath = path.join(tupaiDir, 'bin', 'tupaijs');
-    console.log('spawn :' + tupaijsPath + args);
+    console.log('spawn :' + tupaijsPath + ' ' +  args.join(' '));
     var cp = spawn(tupaijsPath, args);
 
     cp.stderr.pipe(process.stderr);

@@ -39,7 +39,7 @@ function main() {
 
     console.log(' args: %j', program.args);
 
-    //upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/
+    //upstream server URL to proxy requests. e.g. http://localhost:8080/
     proxyURL = program.args[0];
     console.log('proxy: ' + proxyURL);
 

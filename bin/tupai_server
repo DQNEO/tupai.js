@@ -32,6 +32,7 @@ function main() {
 
     console.log('-s ' + program.upstream);
     proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
+    console.log('proxy: ' + proxyURL);
 
     console.log('-t ' + program.tupaidir);
     tupaiDir = program.tupaidir ? path.resolve(program.tupaidir) : path.resolve(__dirname, "..");
@@ -170,7 +171,6 @@ function startHttpServer(printLog) {
 
     var u = URL.parse(proxyURL);
     var proxy = httpProxy.createProxyServer({secure:false});
-    console.log('proxy: /  -> ' + proxyURL);
     app.use('/', function(req, res) {
         proxy.web(req, res, {
             target: proxyURL,

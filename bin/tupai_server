@@ -18,7 +18,6 @@ var tupaiFilesHtml;
 
 var tupaiPort = 30000;
 
-var defaultUpstreamServer  = "http://10.0.0.2:8084/";
 var proxyURL;
 
 var tupaiDir;
@@ -27,18 +26,23 @@ var baseDir;
 
 function main() {
     program
+            .usage('[options] <URL of upstream server>')
             .option('-p, --printLog', 'print log to stdout. default is off')
-            .option('-u, --upstream <URL>', 'upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/')
             .option('-t, --tupaidir <dir>', 'tupaijs base directory')
             .option('-d, --basedir <dir>', 'working directory')
             .option('-g, --generate', 'generate files before running server')
             .parse(process.argv);
 
     console.log('-s ' + program.upstream);
-    proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
-    console.log('proxy: ' + proxyURL);
 
     console.log('-t ' + program.tupaidir);
+
+    console.log(' args: %j', program.args);
+
+    //upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/
+    proxyURL = program.args[0];
+    console.log('proxy: ' + proxyURL);
+
     tupaiDir = program.tupaidir ? path.resolve(program.tupaidir) : path.resolve(__dirname, "..");
     console.log('tupaiDir: ' + tupaiDir);
     tupai  = require(path.join(tupaiDir, 'scripts', 'nodejs'));

@@ -38,11 +38,6 @@ function main() {
 
     tupai  = require(path.join(baseDir, 'scripts', 'nodejs'));
 
-    if(!tupai.isTupaiProjectDir()) {
-        console.error('current dir is not a tupai project dir.');
-        return;
-    }
-
     mConfig = tupai.getConfig();
     //tupai.rmdirSync('gen');
     //fs.mkdirSync('gen');

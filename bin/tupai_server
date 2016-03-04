@@ -102,8 +102,7 @@ function genConfigs() {
 
 function genTemplates(callback) {
     console.log('gen template files:');
-    console.log('    ' + mConfig.templates + ' -> ' + mConfig.genTemplates);
-    spawnTupai(['templates', mConfig.templates, mConfig.genTemplates, '-m', 'no'])
+    spawnTupai(['templates', path.join(baseDir, 'templates'), path.join(baseDir, 'gen/templates'), '-m', 'no'])
     .on('exit', function() {
         callback();
     });

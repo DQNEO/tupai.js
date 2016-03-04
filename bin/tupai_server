@@ -104,9 +104,6 @@ function genConfigs() {
     tupai.compileConfigSync(tupaiConfig.configs, tupaiConfig.genConfigs, 'Config');
 }
 
-function genTemplates(callback) {
-}
-
 function genTemplate(filePath, packageName, callback) {
     console.log('gen template file:' + filePath);
     spawnTupai(['template', filePath, tupaiConfig.genTemplates, packageName, '-m', 'no'])

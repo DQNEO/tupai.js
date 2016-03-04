@@ -43,10 +43,11 @@ function main() {
     process.chdir(baseDir);
 
     mConfig = tupai.getConfig();
-    //tupai.rmdirSync('gen');
-    //fs.mkdirSync('gen');
-    //genConfigs();
-    //genTemplates(function() {
+    tupai.rmdirSync('gen');
+    fs.mkdirSync('gen');
+    fs.mkdirSync('gen/templates');
+    genConfigs();
+    genTemplates(function() {
 
     var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
     var tupaiSrcDir = path.join(tupaiDir, 'src', 'tupai');
@@ -70,7 +71,7 @@ function main() {
     });
 
 
-    //});
+    });
 }
 
 function spawnTupai(args, callback) {

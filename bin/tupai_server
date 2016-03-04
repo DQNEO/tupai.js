@@ -15,6 +15,8 @@ var tupaiConfig;
 var classListHtml;
 var tupaiFilesHtml;
 
+var tupaiPort = 30000;
+
 var defaultUpstreamServer  = "http://10.0.0.2:8084/";
 var proxyURL;
 
@@ -178,10 +180,9 @@ function startHttpServer(printLog) {
     });
 
     app.use('/', express.static(tupaiConfig.web));
-    var port = 30000;
-    http.createServer(app).listen(port, function() {
+    http.createServer(app).listen(tupaiPort, function() {
         console.log('\nopen below url in your browser.');
-        console.log('http://localhost:' + port);
+        console.log('http://localhost:' + tupaiPort);
     });
 }
 

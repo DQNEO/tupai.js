@@ -145,6 +145,7 @@ function startHttpServer(printLog) {
     app.use('/__js', express.static(tupaiConfig.sources));
     app.use('/__js', express.static(tupaiConfig.genTemplates));
     app.use('/__js', express.static(tupaiConfig.genConfigs));
+    app.use('/__tupairoot', express.static(tupaiDir));
 
     app.use('/', function(req, res, next) {
         var p = req.path;
@@ -166,8 +167,6 @@ function startHttpServer(printLog) {
             next();
         }
     });
-
-    app.use('/__tupairoot', express.static(tupaiDir));
 
     var u = URL.parse(proxyURL);
     var proxy = httpProxy.createProxyServer({secure:false});

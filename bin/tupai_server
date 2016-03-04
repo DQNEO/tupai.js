@@ -171,6 +171,10 @@ function startHttpServer(printLog) {
     });
 
     var proxy = httpProxy.createProxyServer({secure:false});
+    proxy.on('error', function(err, req, res) {
+        res.end();
+    });
+
     app.use('/', function(req, res) {
         proxy.web(req, res, {
             target: proxyURL,

@@ -20,23 +20,23 @@ var tupaiFilesHtml;
 var defaultUpstreamServer  = "http://10.0.0.2:8084/";
 var proxyURL;
 
-var baseDir;
+var tupaiDir;
 var tupai;
 
 function main() {
     program
             .option('-p, --printLog', 'print log to stdout. default is off')
             .option('-u, --upstream <URL>', 'upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/')
-            .option('-d, --tupaidir <dir>', 'tupaijs base directory')
+            .option('-t, --tupaidir <dir>', 'tupaijs base directory')
             .parse(process.argv);
 
     console.log('-s ' + program.upstream);
     proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
 
-    console.log('-d ' + program.tupaidir);
-    baseDir = program.tupaidir ? program.tupaidir : path.resolve(__dirname, "..");
+    console.log('-t ' + program.tupaidir);
+    tupaiDir = program.tupaidir ? program.tupaidir : path.resolve(__dirname, "..");
 
-    tupai  = require(path.join(baseDir, 'scripts', 'nodejs'));
+    tupai  = require(path.join(tupaiDir, 'scripts', 'nodejs'));
 
     mConfig = tupai.getConfig();
     //tupai.rmdirSync('gen');
@@ -53,7 +53,7 @@ function main() {
 }
 
 function spawnTupai(args, callback) {
-    var tupaijsPath = path.join(baseDir, 'bin', 'tupaijs');
+    var tupaijsPath = path.join(tupaiDir, 'bin', 'tupaijs');
     console.log('spawn :' + tupaijsPath + args);
     var cp = spawn(tupaijsPath, args);
 
@@ -98,7 +98,7 @@ function genTemplate(filePath, packageName, callback) {
 
 function listTupaiClass(callback) {
     var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
-    var tupaiSrcDir = path.join(baseDir, 'src', 'tupai');
+    var tupaiSrcDir = path.join(tupaiDir, 'src', 'tupai');
     spawnTupai(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
         //if (!output) {return;}
         var classes = JSON.parse(output);
@@ -140,9 +140,9 @@ function startHttpServer(printLog) {
         app.use(express.logger());
     }
 
-    var webDir = path.join(baseDir, 'releases', mConfig.web);
+    var webDir = path.join(tupaiDir, 'releases', mConfig.web);
 
-    app.use(express.favicon(path.join(baseDir, 'favicon.ico')));
+    app.use(express.favicon(path.join(tupaiDir, 'favicon.ico')));
     app.use('/__js', express.static(mConfig.sources));
     app.use('/__js', express.static(mConfig.genTemplates));
     app.use('/__js', express.static(mConfig.genConfigs));
@@ -168,7 +168,7 @@ function startHttpServer(printLog) {
         }
     });
 
-    app.use('/__tupairoot', express.static(baseDir));
+    app.use('/__tupairoot', express.static(tupaiDir));
 
     app.use('/tupai', express.static(webDir));
     app.use('/tupai', express.directory(webDir));

@@ -36,8 +36,8 @@ function main() {
     proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
 
     console.log('-t ' + program.tupaidir);
-    tupaiDir = program.tupaidir ? program.tupaidir : path.resolve(__dirname, "..");
-
+    tupaiDir = program.tupaidir ? path.resolve(program.tupaidir) : path.resolve(__dirname, "..");
+    console.log('tupaiDir: ' + tupaiDir);
     tupai  = require(path.join(tupaiDir, 'scripts', 'nodejs'));
     baseDir = program.basedir ? program.basedir : '.';
     process.chdir(baseDir);

@@ -170,11 +170,6 @@ function startHttpServer(printLog) {
 
     app.use('/__tupairoot', express.static(tupaiDir));
 
-    app.use('/tupai', express.static(webDir));
-    app.use('/tupai', express.directory(webDir));
-    app.use('/templates', express.static(tupaiConfig.templates));
-    app.use('/templates', express.directory(tupaiConfig.templates));
-
     var u = URL.parse(proxyURL);
     var proxy = httpProxy.createProxyServer({secure:false});
     console.log('proxy: /  -> ' + proxyURL);

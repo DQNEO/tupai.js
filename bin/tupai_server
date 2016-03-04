@@ -31,6 +31,7 @@ function main() {
             .option('-u, --upstream <URL>', 'upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/')
             .option('-t, --tupaidir <dir>', 'tupaijs base directory')
             .option('-d, --basedir <dir>', 'working directory')
+            .option('-g, --generate', 'generate files before running server')
             .parse(process.argv);
 
     console.log('-s ' + program.upstream);
@@ -45,14 +46,8 @@ function main() {
     process.chdir(baseDir);
 
     tupaiConfig = tupai.getConfig();
-    tupai.rmdirSync('gen');
-    fs.mkdirSync('gen');
-    fs.mkdirSync('gen/templates');
-    genConfigs();
 
-    console.log('gen template files:');
-    spawnTupai(['templates', path.join(baseDir, 'templates'), path.join(baseDir, 'gen/templates'), '-m', 'no'])
-    .on('exit', function() {
+    var callback = function() {
         var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
         var tupaiSrcDir = path.join(tupaiDir, 'src', 'tupai');
         spawnTupai(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
@@ -73,7 +68,19 @@ function main() {
             });
 
         });
-    });
+    };
+
+    if (program.generate) {
+        tupai.rmdirSync('gen');
+        fs.mkdirSync('gen');
+        fs.mkdirSync('gen/templates');
+        genConfigs();
+        console.log('gen template files:');
+        spawnTupai(['templates', path.join(baseDir, 'templates'), path.join(baseDir, 'gen/templates'), '-m', 'no'])
+                .on('exit', callback);
+    } else {
+        callback();
+    }
 
 }
 

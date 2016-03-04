@@ -22,6 +22,7 @@ var proxyURL;
 
 var tupaiDir;
 var tupai;
+var baseDir;
 
 function main() {
     program
@@ -38,9 +39,8 @@ function main() {
     tupaiDir = program.tupaidir ? program.tupaidir : path.resolve(__dirname, "..");
 
     tupai  = require(path.join(tupaiDir, 'scripts', 'nodejs'));
-    if (program.basedir) {
-        process.chdir(program.basedir);
-    }
+    baseDir = program.basedir ? program.basedir : '.';
+    process.chdir(baseDir);
 
     mConfig = tupai.getConfig();
     //tupai.rmdirSync('gen');

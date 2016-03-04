@@ -9,8 +9,6 @@ var ejs = require('ejs');
 var express = require('express');
 var httpProxy = require('http-proxy');
 var URL = require('url');
-var app = express();
-
 var chokidar = require('chokidar');
 var tupaiConfig;
 
@@ -135,6 +133,7 @@ function listClass(callback) {
 
 function startHttpServer(printLog) {
     console.log('startHttpServer:');
+    var app = express();
 
     if(printLog) {
         app.use(express.logger());

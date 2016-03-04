@@ -47,8 +47,10 @@ function main() {
     fs.mkdirSync('gen');
     fs.mkdirSync('gen/templates');
     genConfigs();
-    genTemplates(function() {
 
+    console.log('gen template files:');
+    spawnTupai(['templates', path.join(baseDir, 'templates'), path.join(baseDir, 'gen/templates'), '-m', 'no'])
+    .on('exit', function() {
         var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
         var tupaiSrcDir = path.join(tupaiDir, 'src', 'tupai');
         spawnTupai(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
@@ -69,9 +71,8 @@ function main() {
             });
 
         });
-
-
     });
+
 }
 
 function spawnTupai(args, callback) {
@@ -102,11 +103,6 @@ function genConfigs() {
 }
 
 function genTemplates(callback) {
-    console.log('gen template files:');
-    spawnTupai(['templates', path.join(baseDir, 'templates'), path.join(baseDir, 'gen/templates'), '-m', 'no'])
-    .on('exit', function() {
-        callback();
-    });
 }
 
 function genTemplate(filePath, packageName, callback) {

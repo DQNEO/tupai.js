@@ -7,6 +7,7 @@ var spawn = require('child_process').spawn;
 var http = require('http');
 var ejs = require('ejs');
 var express = require('express');
+var favicon = require('serve-favicon');
 var httpProxy = require('http-proxy');
 var URL = require('url');
 var chokidar = require('chokidar');
@@ -141,7 +142,8 @@ function startHttpServer(printLog) {
 
     var webDir = path.join(tupaiDir, 'releases', tupaiConfig.web);
 
-    app.use(express.favicon(path.join(tupaiDir, 'favicon.ico')));
+    app.use(favicon(path.join(tupaiDir, 'favicon.ico')));
+    
     app.use('/__js', express.static(tupaiConfig.sources));
     app.use('/__js', express.static(tupaiConfig.genTemplates));
     app.use('/__js', express.static(tupaiConfig.genConfigs));

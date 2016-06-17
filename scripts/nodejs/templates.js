@@ -12,7 +12,7 @@ function compileTemplate(url, output, packageName, options) {
     var data = fs.readFileSync(url);
     console.log('      ' + url);
 
-    var needMinify = true;
+    var needMinify = false;
     if(options && options.minify === false) {
         needMinify = false;
     }

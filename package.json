@@ -12,7 +12,8 @@
   },
   "main": "tupai.js",
   "bin": {
-    "tupaijs": "./bin/tupaijs"
+    "tupaijs": "./bin/tupaijs",
+    "tupai_server": "./bin/tupai_server"
   },
   "scripts": {
     "test": "NODE_ENV=test ./tests/run.js"

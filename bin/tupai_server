@@ -1,0 +1,272 @@
+#!/usr/bin/env node
+var program = require('commander');
+var path = require('path');
+
+var fs = require('fs');
+var spawn = require('child_process').spawn;
+var http = require('http');
+var ejs = require('ejs');
+var express = require('express');
+var favicon = require('serve-favicon');
+var httpProxy = require('http-proxy');
+var URL = require('url');
+var chokidar = require('chokidar');
+var tupaiConfig;
+
+var classListHtml;
+var tupaiFilesHtml;
+
+var tupaiPort = 30000;
+
+var defaultUpstreamServer  = "http://10.0.0.2:8084/";
+var proxyURL;
+
+var tupaiDir;
+var tupai;
+var baseDir;
+
+function main() {
+    program
+            .option('-p, --printLog', 'print log to stdout. default is off')
+            .option('-u, --upstream <URL>', 'upstream server URL to proxy requests. e.g. http://10.0.0.2:8084/')
+            .option('-t, --tupaidir <dir>', 'tupaijs base directory')
+            .option('-d, --basedir <dir>', 'working directory')
+            .parse(process.argv);
+
+    console.log('-s ' + program.upstream);
+    proxyURL = program.upstream ? program.upstream : defaultUpstreamServer;
+    console.log('proxy: ' + proxyURL);
+
+    console.log('-t ' + program.tupaidir);
+    tupaiDir = program.tupaidir ? path.resolve(program.tupaidir) : path.resolve(__dirname, "..");
+    console.log('tupaiDir: ' + tupaiDir);
+    tupai  = require(path.join(tupaiDir, 'scripts', 'nodejs'));
+    baseDir = program.basedir ? program.basedir : '.';
+    process.chdir(baseDir);
+
+    tupaiConfig = tupai.getConfig();
+    tupai.rmdirSync('gen');
+    fs.mkdirSync('gen');
+    fs.mkdirSync('gen/templates');
+    genConfigs();
+
+    console.log('gen template files:');
+    spawnTupai(['templates', path.join(baseDir, 'templates'), path.join(baseDir, 'gen/templates'), '-m', 'no'])
+    .on('exit', function() {
+        var packagejsHtml = '<script src="__tupairoot/libs/package.js"></script>';
+        var tupaiSrcDir = path.join(tupaiDir, 'src', 'tupai');
+        spawnTupai(['list', '--classPath', tupaiSrcDir, '--ignoreNotFound'], function(output) {
+            //if (!output) {return;}
+            var classes = JSON.parse(output);
+            //console.log(classes);
+            var scripts = classes.map(function(_class){
+                var path = _class.path;
+                var filename = path.replace(tupaiSrcDir + "/", "");
+                return '<script src="__tupairoot/src/tupai/' + filename + '"></script>';
+            });
+
+            tupaiFilesHtml = packagejsHtml + "\n" + scripts.join("\n");
+
+            renderClassListHtml(function() {
+                watchFs();
+                startHttpServer(program.printLog);
+            });
+
+        });
+    });
+
+}
+
+function spawnTupai(args, callback) {
+    var tupaijsPath = path.join(tupaiDir, 'bin', 'tupaijs');
+    console.log('spawn :' + tupaijsPath + ' ' +  args.join(' '));
+    var cp = spawn(tupaijsPath, args);
+
+    cp.stderr.pipe(process.stderr);
+    if(callback) {
+        var result='';
+        cp.stdout.on('data', function(data) {
+            result += data.toString();
+        });
+        cp.on('close', function(code) {
+            callback(result);
+        });
+    } else {
+        if(tupaiConfig.logTupai) {
+            cp.stdout.pipe(process.stdout);
+        }
+    }
+    return cp;
+}
+
+function genConfigs() {
+    console.log('gen configs:');
+    tupai.compileConfigSync(tupaiConfig.configs, tupaiConfig.genConfigs, 'Config');
+}
+
+function genTemplate(filePath, packageName, callback) {
+    console.log('gen template file:' + filePath);
+    spawnTupai(['template', filePath, tupaiConfig.genTemplates, packageName, '-m', 'no'])
+    .on('exit', function() {
+        callback();
+    });
+}
+
+function listClass(callback) {
+    var classPath = tupaiConfig.genConfigs + ';' + tupaiConfig.genTemplates + ';' + tupaiConfig.sources;
+    spawnTupai(['list', '--classPath', classPath, '--ignoreNotFound'], function(output) {
+        var classList;
+        try {
+            classList = JSON.parse(output);
+        } catch(e) {
+            console.log("can't parse classlist. ");
+            console.log(output);
+        }
+
+        if(classList) {
+            callback(classList);
+        }
+    });
+}
+
+function startHttpServer(printLog) {
+    console.log('startHttpServer:');
+    var app = express();
+
+    if(printLog) {
+        app.use(express.logger());
+    }
+
+    var webDir = path.join(tupaiDir, 'releases', tupaiConfig.web);
+
+    app.use(favicon(path.join(tupaiDir, 'favicon.ico')));
+    
+    app.use('/__js', express.static(tupaiConfig.sources));
+    app.use('/__js', express.static(tupaiConfig.genTemplates));
+    app.use('/__js', express.static(tupaiConfig.genConfigs));
+    app.use('/__tupairoot', express.static(tupaiDir));
+
+    app.use('/', function(req, res, next) {
+        var p = req.path;
+        if(p === '/') p = '/index.html';
+        if(p.match(/^\/.*\.html$/)) {
+            var filePath = path.join(tupaiConfig.web, p);
+            if(!fs.existsSync(filePath)) {
+                next();
+            } else {
+                var content = fs.readFileSync(filePath).toString();
+                content = content.replace(/<!--[ ]*__js_files__[ ]*-->[\s\S]*<!--[ ]*__js_files__[ ]*-->/, classListHtml);
+                content = content.replace(/<!-- *__tupai_files__ *-->[\s\S]*<!-- *__tupai_files__ *-->/, tupaiFilesHtml);
+                res.send(content);
+            }
+        } else if(p == '/js/tupai.min.js') {
+            var content = fs.readFileSync(path.join(webDir, 'tupai-last.js')).toString();
+            res.send(content);
+        } else {
+            next();
+        }
+    });
+
+    var proxy = httpProxy.createProxyServer({secure:false});
+    proxy.on('error', function(err, req, res) {
+        res.end();
+    });
+
+    app.use('/', function(req, res) {
+        proxy.web(req, res, {
+            target: proxyURL,
+        });
+    });
+
+    app.use('/', express.static(tupaiConfig.web));
+    http.createServer(app).listen(tupaiPort, function() {
+        console.log('\nopen below url in your browser.');
+        console.log('http://localhost:' + tupaiPort);
+    });
+}
+
+
+function renderClassListHtml(callback) {
+    listClass(function(cl) {
+        //classListHtml = '<script src="__js/Config.js"></script>';
+        classListHtml = '';
+        cl.forEach(function(classzz) {
+            classListHtml += '\n<script src="__js/' + classzz.name.split('.').join('/') + '.js"></script>';
+        });
+        callback && callback();
+    });
+}
+
+function watchFs() {
+    console.log('start watching files:');
+
+    var paths = [tupaiConfig.sources, tupaiConfig.templates, tupaiConfig.configs];
+    paths.forEach(function(path) {
+        console.log('    watching ' + path);
+    });
+
+    var renderClassListHtmlFn = function(changeType) {
+        // TODO when change js file to add use will not render class list.
+        if(changeType !== 'change') {
+            renderClassListHtml();
+        }
+    };
+    var rules = [
+        {
+            regexp: new RegExp(tupaiConfig.sources + "\/.*\.js$"),
+            fn: function(changeType, filePath) {
+                renderClassListHtmlFn(changeType);
+            }
+        },
+        {
+            regexp: new RegExp(tupaiConfig.templates + "\/.*\.html$"),
+            fn: function(changeType, filePath) {
+                if(changeType === 'unlink') {
+                    fs.unlinkSync(path.join('gen', filePath.replace(/\.html$/, '.js')));
+                    renderClassListHtmlFn(changeType);
+                } else {
+                    var classPath = path.relative(tupaiConfig.templates, filePath).replace(/\.html$/, '');
+                    genTemplate(filePath, classPath.split('/').join('.'), function() {
+                        renderClassListHtmlFn(changeType);
+                    });
+                }
+            }
+        },
+        {
+            regexp: new RegExp(tupaiConfig.configs + "\/.*\.json$"),
+            fn: function(changeType, filePath) {
+                try {
+                    genConfigs();
+                } catch(e) {
+                    console.error('can\'t generate configs', e);
+                }
+            }
+        }
+    ];
+
+    var changeFn = function(changeType, filePath) {
+        console.log(changeType + ':' + filePath);
+        rules.forEach(function(rule) {
+            if(filePath.match(rule.regexp)) {
+                rule.fn(changeType, filePath);
+            }
+        });
+    };
+
+    var ignoredFn = function(path, st) {
+        if(/\/\./.test(path)) return true;
+        if(/\/.*~$/.test(path)) return true;
+        return false;
+    };
+    var watcher = chokidar.watch(paths, {ignored: ignoredFn, persistent: true, ignoreInitial: true});
+    ['add', 'change', 'unlink'].forEach(function(changeType) {
+        watcher.on(changeType, function(filePath) {
+            changeFn(changeType, filePath);
+        });
+    });
+    watcher.on('error', function(error) {
+        console.error('Error happened', error);
+    });
+}
+
+main();
